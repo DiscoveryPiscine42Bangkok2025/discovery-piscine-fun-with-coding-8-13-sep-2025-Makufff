@@ -12,11 +12,11 @@ function deletelist(cid){
 }
 
 function addtask(){
-    // var data = document.getElementById('objective').value;
-    // console.log(data);
-    var data = prompt("กรอกหน่อยย!!!!!")
+    var input = prompt("กรอกงานใหม่:");
+    if (input === null) return; // user cancelled
+    var data = input.trim();
     let id = Date.now();
-    if (data != '' && data != null){
+    if (data !== '' && data != null){
         addList(data,id);
         setcookie(id,data);
         // checklist();
@@ -28,18 +28,16 @@ function addList(value, id = 'None'){
     var texts = document.createTextNode(value);
     var div = document.createElement('div');
     div.appendChild(texts); div.id = id ;
-    if (value === '' && id === 'None') alert('กรอกหน่อยยยยยยย!!!!');
+    // ไม่เพิ่มและไม่แจ้งเตือน ถ้าค่าว่าง
+    if (value === '' && id === 'None') return;
     else{
         list.prepend(div);
     }
-    div.onclick = function(e){
-        // var div = this. ;
-        if(confirm(`${this.id}`)){
-            // console.log(this.id);
-            deletelist(this.id);
-            this.remove();   
-        }   
-    }   
+    // เปลี่ยนเป็นดับเบิลคลิกเพื่อลบ โดยไม่เด้ง confirm
+    div.ondblclick = function(e){
+        deletelist(this.id);
+        this.remove();
+    }
     
 }
 
@@ -48,7 +46,9 @@ function checklist(){
     console.log(data);
     if (!(data[0] == '' && data.length === 1)){
         for(let i = 0 ; i < data.length ; i++){
-            let part_cookie = data[i].split("=") ;
+            let part = data[i].trim();
+            if (part === '') continue;
+            let part_cookie = part.split("=") ;
             addList(part_cookie[1] , part_cookie[0]);
         }
     }
